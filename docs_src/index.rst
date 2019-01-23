@@ -49,6 +49,8 @@ used to generate it.
 News and Announcements:
 -----------------------
 
+* (01/23) Discussion is now open on `Piazza <https://piazza.com/rutgers/spring2019/cs428>`_.
+
 Contents:
 ---------
 
