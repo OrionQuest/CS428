@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Lecture #1 &mdash; CS 428 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="CS 428 1.0 documentation" href="../index.html" />
+    <link rel="prev" title="1. Project Proposal" href="../homeworks/proposal.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../homeworks/proposal.html" title="1. Project Proposal"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lecture-1">
+<h1>1. Lecture #1<a class="headerlink" href="#lecture-1" title="Permalink to this headline">¶</a></h1>
+<p>This lecture gives a basic introduction to configuring the <a class="reference external" href="https://www.arduino.cc/">Arduino</a> board on Linux,
+as well as programming and uploading sketches on it.
+We also study our very first OpenGL
+example that opens a window when the program is run. The window closes upon
+pressing the <code class="docutils literal"><span class="pre">ESC</span></code> key.</p>
+<div class="line-block">
+<div class="line"><strong>Scribe Notes by Ryan Goldstein:</strong> <a class="reference external" href="../scribe_notes/lecture1_notes_Ryan_Goldstein.md">Source1</a> <a class="reference external" href="../scribe_notes/lecture1_notes_Ryan_Goldstein.pdf">PDF1</a></div>
+<div class="line"><strong>Scribe Notes by Tavel Findlater:</strong> <a class="reference external" href="../scribe_notes/lecture1_notes_Tavel_Findlater.docx">Source2</a> <a class="reference external" href="../scribe_notes/lecture1_notes_Tavel_Findlater.pdf">PDF2</a></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre>#include &lt;GL/glew.h&gt;
+#include &lt;GLFW/glfw3.h&gt;
+#include &lt;iostream&gt;
+
+void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
+{
+    if(key==GLFW_KEY_ESCAPE &amp;&amp; action==GLFW_PRESS)
+        glfwSetWindowShouldClose(window,GL_TRUE);
+}
+
+int main()
+{
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
+
+    GLFWwindow *window=glfwCreateWindow(800,600,&quot;Learn OpenGL&quot;,nullptr,nullptr);
+    if(window==nullptr)
+    {
+        std::cout&lt;&lt;&quot;Failed to create GLFW window!&quot;&lt;&lt;std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+
+    glewExperimental=GL_TRUE;
+    if(glewInit()!=GLEW_OK)
+    {
+        std::cout&lt;&lt;&quot;Failed to initialize GLEW!&quot;&lt;&lt;std::endl;
+        return -1;
+    }
+
+    int width,height;
+    glfwGetFramebufferSize(window,&amp;width,&amp;height);
+    glViewport(0,0,width,height);
+
+    glfwSetKeyCallback(window,key_callback);
+
+    while(!glfwWindowShouldClose(window))
+    {
+        glfwPollEvents();
+
+        glClearColor(.2f,.3f,.3f,1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glfwSwapBuffers(window);
+    }
+    glfwTerminate();
+
+    return 0;
+}
+</pre></div>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">main.cpp</span></code>. To compile the code, run the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o window -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11
+</pre></div>
+</div>
+<p>If you&#8217;re running this command for the very first time, you&#8217;ll need to install some libraries.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../homeworks/proposal.html"
+                        title="previous chapter">1. Project Proposal</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/lectures/lecture1.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../homeworks/proposal.html" title="1. Project Proposal"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2019, Mridul Aanjaneya.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

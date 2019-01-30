@@ -50,9 +50,34 @@ News and Announcements:
 -----------------------
 
 * (01/23) Discussion is now open on `Piazza <https://piazza.com/rutgers/spring2019/cs428>`_.
+* (01/30) There will be **no class on Wednesday, Feb. 6, 2019**.
+* `Project proposal <homeworks/proposal.html>`_ along with names of team members is due **no later than (02/27)**.
+
+.. toctree::
+    :numbered:
+    :hidden:
+    :maxdepth: 3
+
+    Project Proposal <homeworks/proposal>
 
 Contents:
 ---------
+
+.. toctree::
+    :numbered:
+    :includehidden:
+    :maxdepth: 3
+
+    Lecture #1 <lectures/lecture1>
+
+Modeling and Rendering Resources:
+---------------------------------
+
+1. `Blender <https://www.blender.org/>`_
+2. `Autodesk Maya <https://www.autodesk.com/products/maya/overview>`_
+3. `PBRT <https://www.pbrt.org/>`_
+4. `RenderMan <https://renderman.pixar.com/>`_
+5. `Houdini <https://www.sidefx.com/products/houdini/>`_
 
 Hardware Resources:
 -------------------
