@@ -70,4 +70,6 @@ Save this file as ``main.cpp``. To compile the code, run the following command: 
 
     g++ -O3 main.cpp -o window -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11
 
-If you're running this command for the very first time, you'll need to install some libraries.
+If you're running this command for the very first time, you'll need to install some libraries. The following command may help: ::
+
+    sudo apt-get install libglu1-mesa-dev libglew-dev libglfw3-dev libxrandr-dev libxxf86vm-dev libxinerama-dev libxcursor-dev
