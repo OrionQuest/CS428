@@ -5,7 +5,8 @@ This lecture gives a basic introduction to configuring the `Arduino <https://www
 as well as programming and uploading sketches on it.
 We also study our very first OpenGL
 example that opens a window when the program is run. The window closes upon
-pressing the ``ESC`` key.
+pressing the ``ESC`` key. All OpenGL examples dicussed in CS 428 have been
+inspired by this `source <https://learnopengl.com/>`_.
 
 | **Scribe Notes by Ryan Goldstein:** `Source1 <../scribe_notes/lecture1_notes_Ryan_Goldstein.md>`_ `PDF1 <../scribe_notes/lecture1_notes_Ryan_Goldstein.pdf>`_
 | **Scribe Notes by Tavel Findlater:** `Source2 <../scribe_notes/lecture1_notes_Tavel_Findlater.docx>`_ `PDF2 <../scribe_notes/lecture1_notes_Tavel_Findlater.pdf>`_
@@ -69,6 +70,17 @@ pressing the ``ESC`` key.
 Save this file as ``main.cpp``. To compile the code, run the following command: ::
 
     g++ -O3 main.cpp -o window -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11
+
+This will create a binary ``window``, and now if you execute the following command: ::
+
+    ./window
+
+then you should see a new window (like the one shown below) pop-up on your screen:
+
+
+.. image:: ../images/window.png
+    :width: 32%
+    :align: center
 
 If you're running this command for the very first time, you'll need to install some libraries. The following command may help: ::
 

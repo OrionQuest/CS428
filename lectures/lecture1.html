@@ -56,7 +56,8 @@
 as well as programming and uploading sketches on it.
 We also study our very first OpenGL
 example that opens a window when the program is run. The window closes upon
-pressing the <code class="docutils literal"><span class="pre">ESC</span></code> key.</p>
+pressing the <code class="docutils literal"><span class="pre">ESC</span></code> key. All OpenGL examples dicussed in CS 428 have been
+inspired by this <a class="reference external" href="https://learnopengl.com/">source</a>.</p>
 <div class="line-block">
 <div class="line"><strong>Scribe Notes by Ryan Goldstein:</strong> <a class="reference external" href="../scribe_notes/lecture1_notes_Ryan_Goldstein.md">Source1</a> <a class="reference external" href="../scribe_notes/lecture1_notes_Ryan_Goldstein.pdf">PDF1</a></div>
 <div class="line"><strong>Scribe Notes by Tavel Findlater:</strong> <a class="reference external" href="../scribe_notes/lecture1_notes_Tavel_Findlater.docx">Source2</a> <a class="reference external" href="../scribe_notes/lecture1_notes_Tavel_Findlater.pdf">PDF2</a></div>
@@ -120,6 +121,12 @@ int main()
 <div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o window -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11
 </pre></div>
 </div>
+<p>This will create a binary <code class="docutils literal"><span class="pre">window</span></code>, and now if you execute the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>./window
+</pre></div>
+</div>
+<p>then you should see a new window (like the one shown below) pop-up on your screen:</p>
+<a class="reference internal image-reference" href="../_images/window.png"><img alt="../_images/window.png" class="align-center" src="../_images/window.png" style="width: 32%;" /></a>
 <p>If you&#8217;re running this command for the very first time, you&#8217;ll need to install some libraries. The following command may help:</p>
 <div class="highlight-python"><div class="highlight"><pre>sudo apt-get install libglu1-mesa-dev libglew-dev libglfw3-dev libxrandr-dev libxxf86vm-dev libxinerama-dev libxcursor-dev
 </pre></div>
