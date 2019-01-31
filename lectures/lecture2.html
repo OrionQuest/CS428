@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Lecture #2 &mdash; CS 428 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="CS 428 1.0 documentation" href="../index.html" />
+    <link rel="prev" title="1. Lecture #1" href="lecture1.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="lecture1.html" title="1. Lecture #1"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lecture-2">
+<h1>2. Lecture #2<a class="headerlink" href="#lecture-2" title="Permalink to this headline">¶</a></h1>
+<p>We continue our discussion about OpenGL, and learn about <cite>vertex</cite> and <cite>fragment</cite>
+shaders. The following code shows how to draw two triangles with different
+colors.</p>
+<div class="line-block">
+<div class="line"><strong>Scribe Notes by Anna Faytelson:</strong> <a class="reference external" href="../scribe_notes/lecture2_notes_Anna_Faytelson.pdf">PDF1</a></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre>#include &lt;GL/glew.h&gt;
+#include &lt;GLFW/glfw3.h&gt;
+#include &lt;iostream&gt;
+
+void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
+{
+    if(key==GLFW_KEY_ESCAPE &amp;&amp; action==GLFW_PRESS)
+        glfwSetWindowShouldClose(window,GL_TRUE);
+}
+
+// vertex shader
+const GLchar* vertex_shader_source=&quot;# version 330 core\n&quot;
+        &quot;layout (location=0) in vec3 position;\n&quot;
+        &quot;void main()\n&quot;
+        &quot;{\n&quot;
+        &quot;gl_Position = vec4(position.x,position.y,position.z,1.0);\n&quot;
+        &quot;}\0&quot;;
+
+// fragment shaders
+const GLchar* fragment_shader_source1=&quot;# version 330 core\n&quot;
+        &quot;out vec4 color;\n&quot;
+        &quot;void main()\n&quot;
+        &quot;{\n&quot;
+        &quot;color=vec4(1.0f,0.5f,0.2f,1.0f);\n&quot;
+        &quot;}\0&quot;;
+
+const GLchar* fragment_shader_source2=&quot;# version 330 core\n&quot;
+        &quot;out vec4 color;\n&quot;
+        &quot;void main()\n&quot;
+        &quot;{\n&quot;
+        &quot;color=vec4(1.0f,1.0f,0.0f,1.0f);\n&quot;
+        &quot;}\0&quot;;
+
+int main()
+{
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
+
+    GLFWwindow *window=glfwCreateWindow(800,600,&quot;Learn OpenGL&quot;,nullptr,nullptr);
+    if(window==nullptr)
+    {
+        std::cout&lt;&lt;&quot;Failed to create GLFW window!&quot;&lt;&lt;std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+
+    glewExperimental=GL_TRUE;
+    if(glewInit()!=GLEW_OK)
+    {
+        std::cout&lt;&lt;&quot;Failed to initialize GLEW!&quot;&lt;&lt;std::endl;
+        return -1;
+    }
+
+    int width,height;
+    glfwGetFramebufferSize(window,&amp;width,&amp;height);
+    glViewport(0,0,width,height);
+
+    glfwSetKeyCallback(window,key_callback);
+
+    GLfloat vertices[]={
+         0.5f,  0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f
+    };
+
+    GLuint indices1[]={
+        0, 1, 3
+    };
+
+    GLuint indices2[]={
+        1, 2, 3
+    };
+
+    // create vertex buffer object
+    GLuint VBO;
+    glGenBuffers(1,&amp;VBO);
+
+    // create element buffer objects
+    GLuint EBO[2];
+    glGenBuffers(2,EBO);
+
+    // vertex shader
+    GLuint vertex_shader=glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader,1,&amp;vertex_shader_source,NULL);
+    glCompileShader(vertex_shader);
+
+    GLint success;
+    GLchar info_log[512];
+    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&amp;success);
+    if(!success)
+    {
+        glGetShaderInfoLog(vertex_shader,512,NULL,info_log);
+        std::cout&lt;&lt;&quot;Error! Vertex Shader::Compilation Failed!&quot;&lt;&lt;std::endl&lt;&lt;info_log&lt;&lt;std::endl;
+    }
+
+    // fragment shaders
+    GLuint fragment_shader1=glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment_shader1,1,&amp;fragment_shader_source1,NULL);
+    glCompileShader(fragment_shader1);
+
+    glGetShaderiv(fragment_shader1,GL_COMPILE_STATUS,&amp;success);
+    if(!success)
+    {
+        glGetShaderInfoLog(fragment_shader1,512,NULL,info_log);
+        std::cout&lt;&lt;&quot;Error! Fragment Shader::Compilation Failed!&quot;&lt;&lt;std::endl&lt;&lt;info_log&lt;&lt;std::endl;
+    }
+
+    GLuint fragment_shader2=glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment_shader2,1,&amp;fragment_shader_source2,NULL);
+    glCompileShader(fragment_shader2);
+
+    glGetShaderiv(fragment_shader2,GL_COMPILE_STATUS,&amp;success);
+    if(!success)
+    {
+        glGetShaderInfoLog(fragment_shader2,512,NULL,info_log);
+        std::cout&lt;&lt;&quot;Error! Fragment Shader::Compilation Failed!&quot;&lt;&lt;std::endl&lt;&lt;info_log&lt;&lt;std::endl;
+    }
+
+    // shader programs
+    GLuint shader_program1=glCreateProgram();
+    glAttachShader(shader_program1,vertex_shader);
+    glAttachShader(shader_program1,fragment_shader1);
+    glLinkProgram(shader_program1);
+
+    glGetProgramiv(shader_program1,GL_LINK_STATUS,&amp;success);
+    if(!success)
+    {
+        glGetProgramInfoLog(shader_program1,512,NULL,info_log);
+        std::cout&lt;&lt;&quot;Error! Shader Program::Linking Failed!&quot;&lt;&lt;std::endl&lt;&lt;info_log&lt;&lt;std::endl;
+    }
+
+    GLuint shader_program2=glCreateProgram();
+    glAttachShader(shader_program2,vertex_shader);
+    glAttachShader(shader_program2,fragment_shader2);
+    glLinkProgram(shader_program2);
+
+    glGetProgramiv(shader_program2,GL_LINK_STATUS,&amp;success);
+    if(!success)
+    {
+        glGetProgramInfoLog(shader_program2,512,NULL,info_log);
+        std::cout&lt;&lt;&quot;Error! Shader Program::Linking Failed!&quot;&lt;&lt;std::endl&lt;&lt;info_log&lt;&lt;std::endl;
+    }
+
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader1);
+    glDeleteShader(fragment_shader2);
+
+    // create vertex array objects
+    GLuint VAO[2];
+    glGenVertexArrays(2,VAO);
+
+    // bind vertex array object
+    glBindVertexArray(VAO[0]);
+    // copy the vertices in a vertex buffer
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
+    // copy the index array in an element buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices1),indices1,GL_STATIC_DRAW);
+    // set vertex attribute pointers
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GL_FLOAT),(GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    // unbind the vertex array object
+    glBindVertexArray(0);
+
+    // bind vertex array object
+    glBindVertexArray(VAO[1]);
+    // copy the vertices in a vertex buffer
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
+    // copy the index array in an element buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices2),indices2,GL_STATIC_DRAW);
+    // set vertex attribute pointers
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GL_FLOAT),(GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    // unbind the vertex array object
+    glBindVertexArray(0);
+
+    //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+
+    while(!glfwWindowShouldClose(window))
+    {
+        glfwPollEvents();
+
+        glClearColor(.2f,.3f,.3f,1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // use shader programs
+        glUseProgram(shader_program1);
+        glBindVertexArray(VAO[0]);
+        glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
+        glBindVertexArray(0);
+
+        glUseProgram(shader_program2);
+        glBindVertexArray(VAO[1]);
+        glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
+        glBindVertexArray(0);
+
+        glfwSwapBuffers(window);
+    }
+
+    // deallocate all resources
+    glDeleteVertexArrays(2,VAO);
+    glDeleteBuffers(1,&amp;VBO);
+    glDeleteBuffers(2,EBO);
+    // terminate GLFW
+    glfwTerminate();
+
+    return 0;
+}
+</pre></div>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">main.cpp</span></code>. To compile the code, run the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o triangle -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lecture1.html"
+                        title="previous chapter">1. Lecture #1</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/lectures/lecture2.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="lecture1.html" title="1. Lecture #1"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2019, Mridul Aanjaneya.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

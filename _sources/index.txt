@@ -69,6 +69,7 @@ Contents:
     :maxdepth: 3
 
     Lecture #1 <lectures/lecture1>
+    Lecture #2 <lectures/lecture2>
 
 Modeling and Rendering Resources:
 ---------------------------------
