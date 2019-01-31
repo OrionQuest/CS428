@@ -276,6 +276,268 @@ int main()
 <div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o triangle -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11
 </pre></div>
 </div>
+<p>This will create a binary <code class="docutils literal"><span class="pre">triangle</span></code>, and now if you execute the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>./triangle
+</pre></div>
+</div>
+<p>then you should see a new window (like the one shown below) pop-up on your screen:</p>
+<a class="reference internal image-reference" href="../_images/triangles.png"><img alt="../_images/triangles.png" class="align-center" src="../_images/triangles.png" style="width: 32%;" /></a>
+<p>As you can see, writing OpenGL code can quickly become quite cumbersome as many
+initializations and checks need to be executed to make sure that everything was
+setup correctly. However, this is where we can exploit the power of C++, in
+particular, its <em>Object-Oriented Principle</em> to reduce code complexity. In the
+following example, we will create a new class <code class="docutils literal"><span class="pre">Shader</span></code> that will abstract away
+from the user all the intricacies involved in creating a new shader program,
+making it much easier and user-friendly.</p>
+<div class="highlight-python"><div class="highlight"><pre>#ifndef SHADER_H
+#define SHADER_H
+
+#include &lt;string&gt;
+#include &lt;fstream&gt;
+#include &lt;sstream&gt;
+#include &lt;iostream&gt;
+
+#include &lt;GL/glew.h&gt;
+
+class Shader
+{
+  public:
+    // the shader program id
+    GLuint program;
+
+    Shader(const GLchar* vertex_path,const GLchar* fragment_path)
+    {
+        // retrieve the vertex/fragment source code
+        std::string vertex_code,fragment_code;
+        std::ifstream vertex_shader_file,fragment_shader_file;
+
+        // ensures ifstream objects can throw exceptions
+        vertex_shader_file.exceptions(std::ifstream::badbit);
+        fragment_shader_file.exceptions(std::ifstream::badbit);
+
+        try{
+            // open files
+            vertex_shader_file.open(vertex_path);
+            fragment_shader_file.open(fragment_path);
+            std::stringstream vertex_shader_stream,fragment_shader_stream;
+
+            // read file&#39;s buffer contents into streams
+            vertex_shader_stream&lt;&lt;vertex_shader_file.rdbuf();
+            fragment_shader_stream&lt;&lt;fragment_shader_file.rdbuf();
+
+            // close file handlers
+            vertex_shader_file.close();
+            fragment_shader_file.close();
+
+            // convert stream into string
+            vertex_code=vertex_shader_stream.str();
+            fragment_code=fragment_shader_stream.str();
+        }
+        catch(std::ifstream::failure e){
+            std::cout&lt;&lt;&quot;Error::Shader::File Not Successfully Read!&quot;&lt;&lt;std::endl;
+        }
+
+        const GLchar* vertex_shader_code=vertex_code.c_str();
+        const GLchar* fragment_shader_code=fragment_code.c_str();
+
+        // compile shaders
+        GLuint vertex,fragment;
+        GLint success;
+        GLchar info_log[512];
+
+        // vertex shader
+        vertex=glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertex,1,&amp;vertex_shader_code,NULL);
+        glCompileShader(vertex);
+        // print compile errors if any
+        glGetShaderiv(vertex,GL_COMPILE_STATUS,&amp;success);
+        if(!success)
+        {
+            glGetShaderInfoLog(vertex,512,NULL,info_log);
+            std::cout&lt;&lt;&quot;Error::Shader::Vertex::Compilation Failed!&quot;&lt;&lt;std::endl&lt;&lt;info_log&lt;&lt;std::endl;
+        }
+
+        // fragment shader
+        fragment=glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragment,1,&amp;fragment_shader_code,NULL);
+        glCompileShader(fragment);
+        // print compile errors if any
+        glGetShaderiv(fragment,GL_COMPILE_STATUS,&amp;success);
+        if(!success)
+        {
+            glGetShaderInfoLog(fragment,512,NULL,info_log);
+            std::cout&lt;&lt;&quot;Error::Shader::Fragment::Compilation Failed!&quot;&lt;&lt;std::endl&lt;&lt;info_log&lt;&lt;std::endl;
+        }
+
+        // shader program
+        this-&gt;program=glCreateProgram();
+        glAttachShader(this-&gt;program,vertex);
+        glAttachShader(this-&gt;program,fragment);
+        glLinkProgram(this-&gt;program);
+        // print linking errors if any
+        glGetProgramiv(this-&gt;program,GL_LINK_STATUS,&amp;success);
+        if(!success)
+        {
+            glGetProgramInfoLog(this-&gt;program,512,NULL,info_log);
+            std::cout&lt;&lt;&quot;Error::Shader::Program::Linking Failed!&quot;&lt;&lt;std::endl&lt;&lt;info_log&lt;&lt;std::endl;
+        }
+
+        // delete the shaders as they are now linked into our program and no longer necessary
+        glDeleteShader(vertex);
+        glDeleteShader(fragment);
+    }
+
+    void Use()
+    {glUseProgram(this-&gt;program);}
+};
+#endif
+</pre></div>
+</div>
+<p>Save the above code in a file called <code class="docutils literal"><span class="pre">Shader.h</span></code>. Now open up a new file and
+type in the following code below:</p>
+<div class="highlight-python"><div class="highlight"><pre>#include &lt;GL/glew.h&gt;
+#include &lt;GLFW/glfw3.h&gt;
+#include &lt;cmath&gt;
+
+#include &quot;Shader.h&quot;
+
+void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
+{
+    if(key==GLFW_KEY_ESCAPE &amp;&amp; action==GLFW_PRESS)
+        glfwSetWindowShouldClose(window,GL_TRUE);
+}
+
+int main()
+{
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
+
+    GLFWwindow *window=glfwCreateWindow(800,600,&quot;Learn OpenGL&quot;,nullptr,nullptr);
+    if(window==nullptr)
+    {
+        std::cout&lt;&lt;&quot;Failed to create GLFW window!&quot;&lt;&lt;std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+
+    glewExperimental=GL_TRUE;
+    if(glewInit()!=GLEW_OK)
+    {
+        std::cout&lt;&lt;&quot;Failed to initialize GLEW!&quot;&lt;&lt;std::endl;
+        return -1;
+    }
+
+    int width,height;
+    glfwGetFramebufferSize(window,&amp;width,&amp;height);
+    glViewport(0,0,width,height);
+
+    glfwSetKeyCallback(window,key_callback);
+
+    Shader our_shader(&quot;shader.vs&quot;,&quot;shader.frag&quot;);
+
+    GLfloat vertices[]={
+        // positions        // colors
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    GLuint VAO,VBO;
+    glGenBuffers(1,&amp;VBO);
+    glGenVertexArrays(1,&amp;VAO);
+
+    // bind vertex array object
+    glBindVertexArray(VAO);
+
+    // copy the vertices in a buffer
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
+
+    // set position attribute pointers
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    // set color attribute pointers
+    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(GLvoid*)(3*sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
+    // unbind the vertex array object
+    glBindVertexArray(0);
+
+    while(!glfwWindowShouldClose(window))
+    {
+        glfwPollEvents();
+        glClearColor(.2f,.3f,.3f,1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // use shader program
+        our_shader.Use();
+
+        // draw
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES,0,3);
+        glBindVertexArray(0);
+
+        glfwSwapBuffers(window);
+    }
+
+    // deallocate all resources
+    glDeleteVertexArrays(1,&amp;VAO);
+    glDeleteBuffers(1,&amp;VBO);
+    // terminate GLFW
+    glfwTerminate();
+
+    return 0;
+}
+</pre></div>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">main.cpp</span></code>. You will need to create two additional files for
+the vertex and fragment shaders. Open a new file and type the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre>#version 330 core
+layout (location=0) in vec3 position;
+layout (location=1) in vec3 color;
+
+out vec3 our_color;
+
+void main()
+{
+    gl_Position=vec4(position,1.0f);
+    our_color=color;
+}
+</pre></div>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">shader.vs</span></code>. Open another file and type the following
+command:</p>
+<div class="highlight-python"><div class="highlight"><pre>#version 330 core
+in vec3 our_color;
+out vec4 color;
+
+void main()
+{
+    color=vec4(our_color,1.0f);
+}
+</pre></div>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">shader.frag</span></code>. If you did everything right, then you should
+see four new files in your folder now: <code class="docutils literal"><span class="pre">Shader.h</span></code>, <code class="docutils literal"><span class="pre">main.cpp</span></code>,
+<code class="docutils literal"><span class="pre">shader.vs</span></code>, and <code class="docutils literal"><span class="pre">shader.frag</span></code>. To compile the code, run the following
+command:</p>
+<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o triangle -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11
+</pre></div>
+</div>
+<p>This will create a binary <code class="docutils literal"><span class="pre">triangle</span></code>, and now if you execute the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>./triangle
+</pre></div>
+</div>
+<p>then you should see a new window (like the one shown below) pop-up on your screen:</p>
+<a class="reference internal image-reference" href="../_images/multi-color-triangle.png"><img alt="../_images/multi-color-triangle.png" class="align-center" src="../_images/multi-color-triangle.png" style="width: 32%;" /></a>
+<p>Note that this example is a bit different from the previous example, in the
+sense that we specified a <em>color</em> attribute per vertex (unlike the previous
+example where color was associated with the fragment shader). In this case, the
+fragment shader <em>automatically</em> blends the colors, as shown above.</p>
 </div>
 
 
