@@ -45,6 +45,9 @@ colors.
     int main()
     {
         glfwInit();
+    #if __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+    #endif
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
         glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
@@ -240,6 +243,10 @@ then you should see a new window (like the one shown below) pop-up on your scree
     :width: 32%
     :align: center
 
+Execute the following command to run this code on Mac OS: ::
+
+    g++ -O3 main.cpp -o triangle -lGLEW -lglfw -framework OpenGL -ldl -lm -std=c++11
+
 As you can see, writing OpenGL code can quickly become quite cumbersome as many
 initializations and checks need to be executed to make sure that everything was
 setup correctly. However, this is where we can exploit the power of C++, in
@@ -369,6 +376,9 @@ type in the following code below: ::
     int main()
     {
         glfwInit();
+    #if __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+    #endif
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
         glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
@@ -495,6 +505,10 @@ then you should see a new window (like the one shown below) pop-up on your scree
 .. image:: ../images/multi-color-triangle.png
     :width: 32%
     :align: center
+
+Execute the following command to run this code on Mac OS: ::
+
+    g++ -O3 main.cpp -o triangle -lGLEW -lglfw -framework OpenGL -ldl -lm -std=c++11
 
 Note that this example is a bit different from the previous example, in the
 sense that we specified a *color* attribute per vertex (unlike the previous

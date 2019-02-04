@@ -75,6 +75,9 @@ void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
 int main()
 {
     glfwInit();
+#if __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+#endif
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
@@ -127,8 +130,16 @@ int main()
 </div>
 <p>then you should see a new window (like the one shown below) pop-up on your screen:</p>
 <a class="reference internal image-reference" href="../_images/window.png"><img alt="../_images/window.png" class="align-center" src="../_images/window.png" style="width: 32%;" /></a>
-<p>If you&#8217;re running this command for the very first time, you&#8217;ll need to install some libraries. The following command may help:</p>
+<p>Execute the following command to run this code on Mac OS:</p>
+<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o window -lGLEW -lglfw -framework OpenGL -ldl -lm -std=c++11
+</pre></div>
+</div>
+<p>If you&#8217;re running this command for the very first time, you&#8217;ll need to install some libraries. The following command may help on Linux:</p>
 <div class="highlight-python"><div class="highlight"><pre>sudo apt-get install libglu1-mesa-dev libglew-dev libglfw3-dev libxrandr-dev libxxf86vm-dev libxinerama-dev libxcursor-dev
+</pre></div>
+</div>
+<p>The following command may help on Mac OS:</p>
+<div class="highlight-python"><div class="highlight"><pre>brew install glm freetype glfw3 glew pkg-config
 </pre></div>
 </div>
 </div>

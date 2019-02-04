@@ -90,6 +90,9 @@ const GLchar* fragment_shader_source2=&quot;# version 330 core\n&quot;
 int main()
 {
     glfwInit();
+#if __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+#endif
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
@@ -282,6 +285,10 @@ int main()
 </div>
 <p>then you should see a new window (like the one shown below) pop-up on your screen:</p>
 <a class="reference internal image-reference" href="../_images/triangles.png"><img alt="../_images/triangles.png" class="align-center" src="../_images/triangles.png" style="width: 32%;" /></a>
+<p>Execute the following command to run this code on Mac OS:</p>
+<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o triangle -lGLEW -lglfw -framework OpenGL -ldl -lm -std=c++11
+</pre></div>
+</div>
 <p>As you can see, writing OpenGL code can quickly become quite cumbersome as many
 initializations and checks need to be executed to make sure that everything was
 setup correctly. However, this is where we can exploit the power of C++, in
@@ -410,6 +417,9 @@ void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
 int main()
 {
     glfwInit();
+#if __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+#endif
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
@@ -534,6 +544,10 @@ command:</p>
 </div>
 <p>then you should see a new window (like the one shown below) pop-up on your screen:</p>
 <a class="reference internal image-reference" href="../_images/multi-color-triangle.png"><img alt="../_images/multi-color-triangle.png" class="align-center" src="../_images/multi-color-triangle.png" style="width: 32%;" /></a>
+<p>Execute the following command to run this code on Mac OS:</p>
+<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o triangle -lGLEW -lglfw -framework OpenGL -ldl -lm -std=c++11
+</pre></div>
+</div>
 <p>Note that this example is a bit different from the previous example, in the
 sense that we specified a <em>color</em> attribute per vertex (unlike the previous
 example where color was associated with the fragment shader). In this case, the

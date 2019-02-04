@@ -26,6 +26,9 @@ inspired by this `source <https://learnopengl.com/>`_.
     int main()
     {
         glfwInit();
+    #if __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+    #endif
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
         glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
@@ -82,6 +85,14 @@ then you should see a new window (like the one shown below) pop-up on your scree
     :width: 32%
     :align: center
 
-If you're running this command for the very first time, you'll need to install some libraries. The following command may help: ::
+Execute the following command to run this code on Mac OS: ::
+
+    g++ -O3 main.cpp -o window -lGLEW -lglfw -framework OpenGL -ldl -lm -std=c++11
+
+If you're running this command for the very first time, you'll need to install some libraries. The following command may help on Linux: ::
 
     sudo apt-get install libglu1-mesa-dev libglew-dev libglfw3-dev libxrandr-dev libxxf86vm-dev libxinerama-dev libxcursor-dev
+
+The following command may help on Mac OS: ::
+
+    brew install glm freetype glfw3 glew pkg-config
