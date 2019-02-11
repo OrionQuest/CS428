@@ -5,7 +5,8 @@ We continue our discussion about OpenGL, and learn about `vertex` and `fragment`
 shaders. The following code shows how to draw two triangles with different
 colors.
 
-| **Scribe Notes by Anna Faytelson:** `PDF1 <../scribe_notes/lecture2_notes_Anna_Faytelson.pdf>`_
+| **Scribe Notes by Anna Faytelson:** `Source1 <../scribe_notes/lecture2_notes_Anna_Faytelson.zip>`_ `PDF1 <../scribe_notes/lecture2_notes_Anna_Faytelson.pdf>`_
+| **Scribe Notes by Abhishek Sutrave:** `Source2 <../scribe_notes/lecture2_notes_Abhishek_Sutrave.docx>`_ `PDF2 <../scribe_notes/lecture2_notes_Abhishek_Sutrave.pdf>`_
 
 ::
 
