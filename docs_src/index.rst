@@ -71,6 +71,7 @@ Contents:
     Lecture #1 <lectures/lecture1>
     Lecture #2 <lectures/lecture2>
     Lecture #3 <lectures/lecture3>
+    Lecture #4 <lectures/lecture4>
 
 Modeling and Rendering Resources:
 ---------------------------------
