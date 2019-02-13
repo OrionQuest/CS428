@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4. Lecture #4 &mdash; CS 428 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="CS 428 1.0 documentation" href="../index.html" />
+    <link rel="prev" title="3. Lecture #3" href="lecture3.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="lecture3.html" title="3. Lecture #3"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lecture-4">
+<h1>4. Lecture #4<a class="headerlink" href="#lecture-4" title="Permalink to this headline">¶</a></h1>
+<p>This lecture provides an overview of <a class="reference external" href="https://en.wikipedia.org/wiki/Texture_mapping">texture mapping</a> in OpenGL,
+using the a <a class="reference external" href="../images/awesomeface.png">face</a> image and a <a class="reference external" href="../images/container.jpg">container</a> image. We also
+learn how to take an input signal from a switch using the <a class="reference external" href="https://www.arduino.cc/">Arduino</a> board.</p>
+<div class="line-block">
+<div class="line"><strong>Scribe Notes by Ian Moreno:</strong> <a class="reference external" href="../scribe_notes/lecture4_notes_Ian_Moreno.docx">Source1</a></div>
+<div class="line"><strong>Scribe Notes by Margaret Kirollos:</strong> <a class="reference external" href="../scribe_notes/lecture4_notes_Margaret_Kirollos.docx">Source2</a> <a class="reference external" href="../scribe_notes/lecture4_notes_Margaret_Kirollos.pdf">PDF2</a></div>
+</div>
+<p>We will use the same file <code class="docutils literal"><span class="pre">Shader.h</span></code> as before. Open a new window and type in
+the following code below:</p>
+<div class="highlight-python"><div class="highlight"><pre>#include &lt;GL/glew.h&gt;
+#include &lt;GLFW/glfw3.h&gt;
+#include &lt;iostream&gt;
+#include &lt;SOIL.h&gt;
+
+#include &quot;Shader.h&quot;
+
+GLfloat mix_value=0.2f;
+
+void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
+{
+    if(key==GLFW_KEY_ESCAPE &amp;&amp; action==GLFW_PRESS)
+        glfwSetWindowShouldClose(window,GL_TRUE);
+
+    if(key==GLFW_KEY_UP &amp;&amp; action==GLFW_PRESS)
+    {
+        mix_value+=0.1f;
+        if(mix_value&gt;1.0f) mix_value=1.0f;
+    }
+
+    if(key==GLFW_KEY_DOWN &amp;&amp; action==GLFW_PRESS)
+    {
+        mix_value-=0.1f;
+        if(mix_value&lt;0.0f) mix_value=0.0f;
+    }
+}
+
+int main()
+{
+    glfwInit();
+#if __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+#endif
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
+
+    GLFWwindow *window=glfwCreateWindow(800,600,&quot;Learn OpenGL&quot;,nullptr,nullptr);
+    if(window==nullptr)
+    {
+        std::cout&lt;&lt;&quot;Failed to create GLFW window!&quot;&lt;&lt;std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+
+    glewExperimental=GL_TRUE;
+    if(glewInit()!=GLEW_OK)
+    {
+        std::cout&lt;&lt;&quot;Failed to initialize GLEW!&quot;&lt;&lt;std::endl;
+        return -1;
+    }
+
+    int width,height;
+    glfwGetFramebufferSize(window,&amp;width,&amp;height);
+    glViewport(0,0,width,height);
+
+    glfwSetKeyCallback(window,key_callback);
+
+    Shader our_shader(&quot;shader.vs&quot;,&quot;shader.frag&quot;);
+
+    GLuint texture1,texture2;
+
+    // generate texture 1
+    glGenTextures(1,&amp;texture1);
+    glBindTexture(GL_TEXTURE_2D,texture1);
+    // set texture parameters
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+    // set texture filtering
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    // load, create and generate mipmaps
+    unsigned char* image=SOIL_load_image(&quot;container.jpg&quot;,&amp;width,&amp;height,0,SOIL_LOAD_RGB);
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    // free image data
+    SOIL_free_image_data(image);
+    glBindTexture(GL_TEXTURE_2D,0);
+
+    // generate texture 2
+    glGenTextures(1,&amp;texture2);
+    glBindTexture(GL_TEXTURE_2D,texture2);
+    // set texture parameters
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+    // set texture filtering
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    // load, create and generate mipmaps
+    image=SOIL_load_image(&quot;awesomeface.png&quot;,&amp;width,&amp;height,0,SOIL_LOAD_RGB);
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    // free image data
+    SOIL_free_image_data(image);
+    glBindTexture(GL_TEXTURE_2D,0);
+
+    GLfloat vertices[]={
+        // positions        // colors           // textures
+         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   2.0f, 2.0f,
+         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   2.0f, 0.0f,
+        -0.5f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 2.0f
+    };
+
+    GLuint indices[]={
+        0, 1, 3,
+        1, 2, 3
+    };
+
+    GLuint VAO,VBO,EBO;
+    glGenBuffers(1,&amp;VBO);
+    glGenBuffers(1,&amp;EBO);
+    glGenVertexArrays(1,&amp;VAO);
+
+    // bind vertex array object
+    glBindVertexArray(VAO);
+
+    // copy the vertices in a buffer
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
+    // copy the index array in an element buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
+
+    // set position attribute pointers
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    // set color attribute pointers
+    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)(3*sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+    // set texture attribute pointers
+    glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)(6*sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
+
+    // unbind the vertex array object
+    glBindVertexArray(0);
+
+    while(!glfwWindowShouldClose(window))
+    {
+        glfwPollEvents();
+        glClearColor(.2f,.3f,.3f,1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // use shader program
+        our_shader.Use();
+
+        // draw
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,texture1);
+        glUniform1i(glGetUniformLocation(our_shader.program,&quot;our_texture1&quot;),0);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D,texture2);
+        glUniform1i(glGetUniformLocation(our_shader.program,&quot;our_texture2&quot;),1);
+
+        glUniform1f(glGetUniformLocation(our_shader.program,&quot;mix_value&quot;),mix_value);
+
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+        glBindVertexArray(0);
+
+        glfwSwapBuffers(window);
+    }
+
+    // deallocate all resources
+    glDeleteVertexArrays(1,&amp;VAO);
+    glDeleteBuffers(1,&amp;VBO);
+    glDeleteBuffers(1,&amp;EBO);
+    // terminate GLFW
+    glfwTerminate();
+
+    return 0;
+}
+</pre></div>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">main.cpp</span></code>. Open another window and type in the following
+code:</p>
+<div class="highlight-python"><div class="highlight"><pre>#version 330 core
+layout (location=0) in vec3 position;
+layout (location=1) in vec3 color;
+layout (location=2) in vec2 tex_coord;
+
+out vec3 our_color;
+out vec2 TexCoord;
+
+void main()
+{
+    gl_Position=vec4(position,1.0f);
+    our_color=color;
+    TexCoord=vec2(tex_coord.x,1.0f-tex_coord.y);
+}
+</pre></div>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">shader.vs</span></code>. Finally, open another window and type in the
+following code:</p>
+<div class="highlight-python"><div class="highlight"><pre>#version 330 core
+in vec3 our_color;
+in vec2 TexCoord;
+
+out vec4 color;
+
+uniform float mix_value;
+
+uniform sampler2D our_texture1;
+uniform sampler2D our_texture2;
+
+void main()
+{
+    color=mix(texture(our_texture1,TexCoord),texture(our_texture2,vec2(1.0f-TexCoord.x,TexCoord.y)),mix_value);
+}
+</pre></div>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">shader.frag</span></code>. This example using the <a class="reference external" href="https://github.com/littlstar/soil">SOIL</a> library for reading images.
+On Linux, it can be installed using the command:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install libsoil-dev
+</pre></div>
+</div>
+<p>To compile the above program on Linux, run the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o textures -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11 -I /usr/include/SOIL -lSOIL
+</pre></div>
+</div>
+<p>Note that the above command assumes that the header files (in particular, <code class="docutils literal"><span class="pre">SOIL.h</span></code>) is present in the <code class="docutils literal"><span class="pre">/usr/include/SOIL/</span></code> directory. If all goes well,
+this should produce the binary <code class="docutils literal"><span class="pre">textures</span></code>, which you can now run using:</p>
+<div class="highlight-python"><div class="highlight"><pre>./textures
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lecture3.html"
+                        title="previous chapter">3. Lecture #3</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/lectures/lecture4.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="lecture3.html" title="3. Lecture #3"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2019, Mridul Aanjaneya.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>
