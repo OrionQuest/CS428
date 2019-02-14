@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. Lecture #4 &mdash; CS 428 1.0 documentation</title>
+    <title>5.1. Transformations &mdash; CS 428 1.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,9 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="CS 428 1.0 documentation" href="../index.html" />
-    <link rel="next" title="5. Lecture #5" href="lecture5.html" />
-    <link rel="prev" title="3. Lecture #3" href="lecture3.html" /> 
+    <link rel="up" title="5. Lecture #5" href="lecture5.html" />
+    <link rel="next" title="5.2. Coordinates" href="coordinates.html" />
+    <link rel="prev" title="5. Lecture #5" href="lecture5.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,12 +37,13 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="lecture5.html" title="5. Lecture #5"
+          <a href="coordinates.html" title="5.2. Coordinates"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="lecture3.html" title="3. Lecture #3"
+          <a href="lecture5.html" title="5. Lecture #5"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="lecture5.html" accesskey="U">5. Lecture #5</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -50,21 +52,18 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="lecture-4">
-<h1>4. Lecture #4<a class="headerlink" href="#lecture-4" title="Permalink to this headline">¶</a></h1>
-<p>This lecture provides an overview of <a class="reference external" href="https://en.wikipedia.org/wiki/Texture_mapping">texture mapping</a> in OpenGL,
-using the a <a class="reference external" href="../images/awesomeface.png">face</a> image and a <a class="reference external" href="../images/container.jpg">container</a> image. We also
-learn how to take an input signal from a switch using the <a class="reference external" href="https://www.arduino.cc/">Arduino</a> board.</p>
-<div class="line-block">
-<div class="line"><strong>Scribe Notes by Ian Moreno:</strong> <a class="reference external" href="../scribe_notes/lecture4_notes_Ian_Moreno.docx">Source1</a></div>
-<div class="line"><strong>Scribe Notes by Margaret Kirollos:</strong> <a class="reference external" href="../scribe_notes/lecture4_notes_Margaret_Kirollos.docx">Source2</a> <a class="reference external" href="../scribe_notes/lecture4_notes_Margaret_Kirollos.pdf">PDF2</a></div>
-</div>
-<p>We will use the same file <code class="docutils literal"><span class="pre">Shader.h</span></code> as before. Open a new window and type in
-the following code below:</p>
+  <div class="section" id="transformations">
+<h1>5.1. Transformations<a class="headerlink" href="#transformations" title="Permalink to this headline">¶</a></h1>
+<p>Open a window and type in the following code:</p>
 <div class="highlight-python"><div class="highlight"><pre>#include &lt;GL/glew.h&gt;
 #include &lt;GLFW/glfw3.h&gt;
 #include &lt;iostream&gt;
 #include &lt;SOIL.h&gt;
+
+#define GLM_FORCE_RADIANS
+#include &lt;glm/glm.hpp&gt;
+#include &lt;glm/gtc/matrix_transform.hpp&gt;
+#include &lt;glm/gtc/type_ptr.hpp&gt;
 
 #include &quot;Shader.h&quot;
 
@@ -161,10 +160,10 @@ int main()
 
     GLfloat vertices[]={
         // positions        // colors           // textures
-         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   2.0f, 2.0f,
-         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   2.0f, 0.0f,
+         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
         -0.5f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 2.0f
+        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f
     };
 
     GLuint indices[]={
@@ -209,7 +208,7 @@ int main()
         // use shader program
         our_shader.Use();
 
-        // draw
+        // bind textures
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D,texture1);
         glUniform1i(glGetUniformLocation(our_shader.program,&quot;our_texture1&quot;),0);
@@ -219,6 +218,15 @@ int main()
 
         glUniform1f(glGetUniformLocation(our_shader.program,&quot;mix_value&quot;),mix_value);
 
+        // generate transformation matrix
+        glm::mat4 trans(1.0f);
+        trans=glm::translate(trans,glm::vec3(0.5f,-0.5f,0.0f));
+        trans=glm::rotate(trans,glm::radians((GLfloat)glfwGetTime()*50.0f),glm::vec3(0.0f,0.0f,1.0f));
+
+        GLuint transform_location=glGetUniformLocation(our_shader.program,&quot;transform&quot;);
+        glUniformMatrix4fv(transform_location,1,GL_FALSE,glm::value_ptr(trans));
+
+        // draw
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
         glBindVertexArray(0);
@@ -247,15 +255,17 @@ layout (location=2) in vec2 tex_coord;
 out vec3 our_color;
 out vec2 TexCoord;
 
+uniform mat4 transform;
+
 void main()
 {
-    gl_Position=vec4(position,1.0f);
+    gl_Position=transform*vec4(position,1.0f);
     our_color=color;
     TexCoord=vec2(tex_coord.x,1.0f-tex_coord.y);
 }
 </pre></div>
 </div>
-<p>Save this file as <code class="docutils literal"><span class="pre">shader.vs</span></code>. Finally, open another window and type in the
+<p>Save this file as <code class="docutils literal"><span class="pre">shader.vs</span></code>. Finally, open another window and type the
 following code:</p>
 <div class="highlight-python"><div class="highlight"><pre>#version 330 core
 in vec3 our_color;
@@ -270,24 +280,11 @@ uniform sampler2D our_texture2;
 
 void main()
 {
-    color=mix(texture(our_texture1,TexCoord),texture(our_texture2,vec2(1.0f-TexCoord.x,TexCoord.y)),mix_value);
+    color=mix(texture(our_texture1,TexCoord),texture(our_texture2,TexCoord),mix_value);
 }
 </pre></div>
 </div>
-<p>Save this file as <code class="docutils literal"><span class="pre">shader.frag</span></code>. This example using the <a class="reference external" href="https://github.com/littlstar/soil">SOIL</a> library for reading images.
-On Linux, it can be installed using the command:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install libsoil-dev
-</pre></div>
-</div>
-<p>To compile the above program on Linux, run the following command:</p>
-<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o textures -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11 -I /usr/include/SOIL -lSOIL
-</pre></div>
-</div>
-<p>Note that the above command assumes that the header files (in particular, <code class="docutils literal"><span class="pre">SOIL.h</span></code>) is present in the <code class="docutils literal"><span class="pre">/usr/include/SOIL/</span></code> directory. If all goes well,
-this should produce the binary <code class="docutils literal"><span class="pre">textures</span></code>, which you can now run using:</p>
-<div class="highlight-python"><div class="highlight"><pre>./textures
-</pre></div>
-</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">shader.frag</span></code>.</p>
 </div>
 
 
@@ -297,15 +294,15 @@ this should produce the binary <code class="docutils literal"><span class="pre">
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="lecture3.html"
-                        title="previous chapter">3. Lecture #3</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="lecture5.html"
-                        title="next chapter">5. Lecture #5</a></p>
+                        title="previous chapter">5. Lecture #5</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="coordinates.html"
+                        title="next chapter">5.2. Coordinates</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/lectures/lecture4.txt"
+      <li><a href="../_sources/lectures/transformations.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -333,12 +330,13 @@ this should produce the binary <code class="docutils literal"><span class="pre">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="lecture5.html" title="5. Lecture #5"
+          <a href="coordinates.html" title="5.2. Coordinates"
              >next</a> |</li>
         <li class="right" >
-          <a href="lecture3.html" title="3. Lecture #3"
+          <a href="lecture5.html" title="5. Lecture #5"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="lecture5.html" >5. Lecture #5</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

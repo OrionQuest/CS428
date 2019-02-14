@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. Lecture #4 &mdash; CS 428 1.0 documentation</title>
+    <title>5.2. Coordinates &mdash; CS 428 1.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,9 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="CS 428 1.0 documentation" href="../index.html" />
-    <link rel="next" title="5. Lecture #5" href="lecture5.html" />
-    <link rel="prev" title="3. Lecture #3" href="lecture3.html" /> 
+    <link rel="up" title="5. Lecture #5" href="lecture5.html" />
+    <link rel="next" title="5.3. Camera Control" href="camera.html" />
+    <link rel="prev" title="5.1. Transformations" href="transformations.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,12 +37,13 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="lecture5.html" title="5. Lecture #5"
+          <a href="camera.html" title="5.3. Camera Control"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="lecture3.html" title="3. Lecture #3"
+          <a href="transformations.html" title="5.1. Transformations"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="lecture5.html" accesskey="U">5. Lecture #5</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -50,21 +52,18 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="lecture-4">
-<h1>4. Lecture #4<a class="headerlink" href="#lecture-4" title="Permalink to this headline">¶</a></h1>
-<p>This lecture provides an overview of <a class="reference external" href="https://en.wikipedia.org/wiki/Texture_mapping">texture mapping</a> in OpenGL,
-using the a <a class="reference external" href="../images/awesomeface.png">face</a> image and a <a class="reference external" href="../images/container.jpg">container</a> image. We also
-learn how to take an input signal from a switch using the <a class="reference external" href="https://www.arduino.cc/">Arduino</a> board.</p>
-<div class="line-block">
-<div class="line"><strong>Scribe Notes by Ian Moreno:</strong> <a class="reference external" href="../scribe_notes/lecture4_notes_Ian_Moreno.docx">Source1</a></div>
-<div class="line"><strong>Scribe Notes by Margaret Kirollos:</strong> <a class="reference external" href="../scribe_notes/lecture4_notes_Margaret_Kirollos.docx">Source2</a> <a class="reference external" href="../scribe_notes/lecture4_notes_Margaret_Kirollos.pdf">PDF2</a></div>
-</div>
-<p>We will use the same file <code class="docutils literal"><span class="pre">Shader.h</span></code> as before. Open a new window and type in
-the following code below:</p>
+  <div class="section" id="coordinates">
+<h1>5.2. Coordinates<a class="headerlink" href="#coordinates" title="Permalink to this headline">¶</a></h1>
+<p>Open a window and type in the following code:</p>
 <div class="highlight-python"><div class="highlight"><pre>#include &lt;GL/glew.h&gt;
 #include &lt;GLFW/glfw3.h&gt;
 #include &lt;iostream&gt;
 #include &lt;SOIL.h&gt;
+
+#define GLM_FORCE_RADIANS
+#include &lt;glm/glm.hpp&gt;
+#include &lt;glm/gtc/matrix_transform.hpp&gt;
+#include &lt;glm/gtc/type_ptr.hpp&gt;
 
 #include &quot;Shader.h&quot;
 
@@ -119,6 +118,10 @@ int main()
     glfwGetFramebufferSize(window,&amp;width,&amp;height);
     glViewport(0,0,width,height);
 
+    // projection matrix
+    glm::mat4 projection(1.0f);
+    projection=glm::perspective(glm::radians(45.0f),(float)width/height,0.1f,100.0f);
+
     glfwSetKeyCallback(window,key_callback);
 
     Shader our_shader(&quot;shader.vs&quot;,&quot;shader.frag&quot;);
@@ -160,21 +163,65 @@ int main()
     glBindTexture(GL_TEXTURE_2D,0);
 
     GLfloat vertices[]={
-        // positions        // colors           // textures
-         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   2.0f, 2.0f,
-         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   2.0f, 0.0f,
-        -0.5f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 2.0f
+        // positions        // textures
+        -0.5f,-0.5f,-0.5f,  0.0f,0.0f,
+         0.5f,-0.5f,-0.5f,  1.0f,0.0f,
+         0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+         0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+        -0.5f, 0.5f,-0.5f,  0.0f,1.0f,
+        -0.5f,-0.5f,-0.5f,  0.0f,0.0f,
+
+        -0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+         0.5f,-0.5f, 0.5f,  1.0f,0.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,1.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,1.0f,
+        -0.5f, 0.5f, 0.5f,  0.0f,1.0f,
+        -0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+
+        -0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+        -0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+        -0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+        -0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+        -0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+        -0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+
+         0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+         0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+         0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+         0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+         0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+
+        -0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+         0.5f,-0.5f,-0.5f,  1.0f,1.0f,
+         0.5f,-0.5f, 0.5f,  1.0f,0.0f,
+         0.5f,-0.5f, 0.5f,  1.0f,0.0f,
+        -0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+        -0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+
+        -0.5f, 0.5f,-0.5f,  0.0f,1.0f,
+         0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+        -0.5f, 0.5f, 0.5f,  0.0f,0.0f,
+        -0.5f, 0.5f,-0.5f,  0.0f,1.0f
     };
 
-    GLuint indices[]={
-        0, 1, 3,
-        1, 2, 3
+    glm::vec3 cube_positions[]={
+        glm::vec3( 0.0f, 0.0f, 0.0f),
+        glm::vec3( 2.0f, 5.0f,-15.0f),
+        glm::vec3(-1.5f,-2.2f,-2.5f),
+        glm::vec3(-3.8f,-2.0f,-12.3f),
+        glm::vec3( 2.4f,-0.4f,-3.5f),
+        glm::vec3(-1.7f, 3.0f,-7.5f),
+        glm::vec3( 1.3f,-2.0f,-2.5f),
+        glm::vec3( 1.5f, 2.0f,-2.5f),
+        glm::vec3( 1.5f, 0.2f,-1.5f),
+        glm::vec3(-1.3f, 1.0f,-1.5f)
     };
 
-    GLuint VAO,VBO,EBO;
+    GLuint VAO,VBO;
     glGenBuffers(1,&amp;VBO);
-    glGenBuffers(1,&amp;EBO);
     glGenVertexArrays(1,&amp;VAO);
 
     // bind vertex array object
@@ -183,33 +230,34 @@ int main()
     // copy the vertices in a buffer
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-    // copy the index array in an element buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
 
     // set position attribute pointers
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)0);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(GLvoid*)0);
     glEnableVertexAttribArray(0);
-    // set color attribute pointers
-    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)(3*sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
     // set texture attribute pointers
-    glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)(6*sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(GLvoid*)(3*sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
 
     // unbind the vertex array object
     glBindVertexArray(0);
+
+    // view space transform
+    glm::mat4 view(1.0f);
+    // note that we&#39;re translating the scene in the reverse direction of where we want to move
+    view=glm::translate(view,glm::vec3(0.0f,0.0f,-3.0f));
+
+    glEnable(GL_DEPTH_TEST);
 
     while(!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
         glClearColor(.2f,.3f,.3f,1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // use shader program
         our_shader.Use();
 
-        // draw
+        // bind textures
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D,texture1);
         glUniform1i(glGetUniformLocation(our_shader.program,&quot;our_texture1&quot;),0);
@@ -219,8 +267,26 @@ int main()
 
         glUniform1f(glGetUniformLocation(our_shader.program,&quot;mix_value&quot;),mix_value);
 
+        GLuint model_location=glGetUniformLocation(our_shader.program,&quot;model&quot;);
+        GLuint view_location=glGetUniformLocation(our_shader.program,&quot;view&quot;);
+        glUniformMatrix4fv(view_location,1,GL_FALSE,glm::value_ptr(view));
+        GLuint projection_location=glGetUniformLocation(our_shader.program,&quot;projection&quot;);
+        glUniformMatrix4fv(projection_location,1,GL_FALSE,glm::value_ptr(projection));
+
+        // draw
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+        for(GLuint i=0;i&lt;10;++i)
+        {
+            // world space transform
+            glm::mat4 model(1.0f);
+            model=glm::translate(model,cube_positions[i]);
+            model=glm::rotate(model,glm::radians((GLfloat)glfwGetTime()*50.0f),glm::vec3(0.5f,1.0f,0.0f));
+            GLfloat angle=glm::radians(20.0f*i);
+            model=glm::rotate(model,angle,glm::vec3(1.0f,0.3f,0.5f));
+            glUniformMatrix4fv(model_location,1,GL_FALSE,glm::value_ptr(model));
+
+            glDrawArrays(GL_TRIANGLES,0,36);
+        }
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
@@ -229,7 +295,6 @@ int main()
     // deallocate all resources
     glDeleteVertexArrays(1,&amp;VAO);
     glDeleteBuffers(1,&amp;VBO);
-    glDeleteBuffers(1,&amp;EBO);
     // terminate GLFW
     glfwTerminate();
 
@@ -241,24 +306,24 @@ int main()
 code:</p>
 <div class="highlight-python"><div class="highlight"><pre>#version 330 core
 layout (location=0) in vec3 position;
-layout (location=1) in vec3 color;
-layout (location=2) in vec2 tex_coord;
+layout (location=1) in vec2 tex_coord;
 
-out vec3 our_color;
 out vec2 TexCoord;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main()
 {
-    gl_Position=vec4(position,1.0f);
-    our_color=color;
+    gl_Position=projection*view*model*vec4(position,1.0f);
     TexCoord=vec2(tex_coord.x,1.0f-tex_coord.y);
 }
 </pre></div>
 </div>
-<p>Save this file as <code class="docutils literal"><span class="pre">shader.vs</span></code>. Finally, open another window and type in the
+<p>Save this file as <code class="docutils literal"><span class="pre">shader.vs</span></code>. Finally, open another window and type the
 following code:</p>
 <div class="highlight-python"><div class="highlight"><pre>#version 330 core
-in vec3 our_color;
 in vec2 TexCoord;
 
 out vec4 color;
@@ -270,24 +335,11 @@ uniform sampler2D our_texture2;
 
 void main()
 {
-    color=mix(texture(our_texture1,TexCoord),texture(our_texture2,vec2(1.0f-TexCoord.x,TexCoord.y)),mix_value);
+    color=mix(texture(our_texture1,TexCoord),texture(our_texture2,TexCoord),mix_value);
 }
 </pre></div>
 </div>
-<p>Save this file as <code class="docutils literal"><span class="pre">shader.frag</span></code>. This example using the <a class="reference external" href="https://github.com/littlstar/soil">SOIL</a> library for reading images.
-On Linux, it can be installed using the command:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install libsoil-dev
-</pre></div>
-</div>
-<p>To compile the above program on Linux, run the following command:</p>
-<div class="highlight-python"><div class="highlight"><pre>g++ -O3 main.cpp -o textures -lGLEW -lglfw -lGL -lX11 -lpthread -lXrandr -ldl -lXxf86vm -lXinerama -lXcursor -lrt -lm -std=c++11 -I /usr/include/SOIL -lSOIL
-</pre></div>
-</div>
-<p>Note that the above command assumes that the header files (in particular, <code class="docutils literal"><span class="pre">SOIL.h</span></code>) is present in the <code class="docutils literal"><span class="pre">/usr/include/SOIL/</span></code> directory. If all goes well,
-this should produce the binary <code class="docutils literal"><span class="pre">textures</span></code>, which you can now run using:</p>
-<div class="highlight-python"><div class="highlight"><pre>./textures
-</pre></div>
-</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">shader.frag</span></code>.</p>
 </div>
 
 
@@ -297,15 +349,15 @@ this should produce the binary <code class="docutils literal"><span class="pre">
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="lecture3.html"
-                        title="previous chapter">3. Lecture #3</a></p>
+  <p class="topless"><a href="transformations.html"
+                        title="previous chapter">5.1. Transformations</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="lecture5.html"
-                        title="next chapter">5. Lecture #5</a></p>
+  <p class="topless"><a href="camera.html"
+                        title="next chapter">5.3. Camera Control</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/lectures/lecture4.txt"
+      <li><a href="../_sources/lectures/coordinates.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -333,12 +385,13 @@ this should produce the binary <code class="docutils literal"><span class="pre">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="lecture5.html" title="5. Lecture #5"
+          <a href="camera.html" title="5.3. Camera Control"
              >next</a> |</li>
         <li class="right" >
-          <a href="lecture3.html" title="3. Lecture #3"
+          <a href="transformations.html" title="5.1. Transformations"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="lecture5.html" >5. Lecture #5</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
