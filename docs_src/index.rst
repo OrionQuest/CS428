@@ -20,6 +20,10 @@ previous class.
 | **Office hours:** Monday/Wednesday (1PM - 2PM)
 | **Email:** mridul.aanjaneya@rutgers.edu
 
+| **Graders:** Shuya Zhao, Mingxiao Liu, Yixuan Duan
+| **Office:** Hill 264A
+| **Office hours:** Tuesday (10AM - 12PM)
+
 **Email Policy:** You are welcome to email the instructor about class-related
 issues. Please start your subject line with \"**CS 428:**\". However, please do
 not always count on an immediate reply. Although most questions will be answered
@@ -75,6 +79,12 @@ Contents:
     Lecture #3 <lectures/lecture3>
     Lecture #4 <lectures/lecture4>
     Lecture #5 <lectures/lecture5>
+
+Coding Resources:
+-----------------
+
+Thanks to a current student, Yijia Liu, here is a guide to OpenGL programming
+with Visual Studio 2017 on Windows: `PDF <scribe_notes/OpenGL_VS2017_Guide.pdf>`_
 
 Modeling and Rendering Resources:
 ---------------------------------
