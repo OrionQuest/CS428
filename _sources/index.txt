@@ -81,6 +81,7 @@ Contents:
     Lecture #5 <lectures/lecture5>
     Lecture #6 <lectures/lecture6>
     Lecture #7 <lectures/lecture7>
+    Lecture #8 <lectures/lecture8>
 
 Coding Resources:
 -----------------

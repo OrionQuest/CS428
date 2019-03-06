@@ -1,0 +1,188 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+%\addtolength{\textheight}{+ .1\textheight}
+\title{CS428 Graphics Lecture Monday 03/04/2019}
+\author{Ian Moreno}
+%\date{03/04/2019}
+
+\begin{document}
+	\maketitle 
+	
+	\section{Rotations}
+
+	\begin{itemize}
+		\item  NOTE: 3x3 matrices have 9 numbers but only 3 are independent
+	\end{itemize}
+	\begin{table}[h]
+		\begin{center}
+			{\small Euler Angles Have Singularities (Inverse problem cannot always be solved, however)}
+			\linebreak
+		{\renewcommand{\arraystretch}{2}%
+			\begin{tabular}{|l|l|}
+				\hline
+				ZYZ & Refers to rotation angle about current frame \\
+				\hline
+				RPY & Refers to rotation angle about fixed frame \\
+				\hline
+				Angle And Axis & A general 3D $\vec{v}$ and angle $\alpha$ \\
+				\hline
+		\end{tabular}} \quad
+		\end{center}
+	\end{table}
+	
+	\section{Unit Quaternions}
+	\begin{itemize}
+		\item  Using Quaternions, the inverse problem can \underline{always} be solved.
+		\item Unit Quaternions represented by 4 numbers
+	\end{itemize}
+	
+	$Q = ($\space$\zeta, \vec{\varepsilon}$\space$)$\space,\space$\zeta = \cos(\frac{v}{2})$,\space$\varepsilon = sin(\frac{v}{2})\vec{\gamma}$
+	\begin{center}$v =$\space angle of rotation, $\gamma =$\space axis of rotation \end{center}
+
+	$\vec{\varepsilon} = \begin{bmatrix}\varepsilon_x \\ \varepsilon_y \\ \varepsilon_z \end{bmatrix} $
+	\begin{center}
+	Assume $\vec{\gamma}$ is a unit vector then $\vec{\varepsilon} = sin(\frac{v}{2})\vec{\gamma}$
+	\newline
+	$||\vec{\gamma}||^2 = 1$
+	\newline
+	$\gamma_x^2 + \gamma_y^2 + \gamma_x^2 = 1$
+	\newline
+	\newline
+	$\vec{\varepsilon}  = sin(\frac{v}{2})\vec{\gamma}$,\space$||\vec{\varepsilon}||^2 = \varepsilon_x^2 + \varepsilon_y^2 + \varepsilon_z^2 = sin^2(\frac{v}{2})(\gamma_x^2 + \gamma_y^2 + \gamma_z^2) = sin^2(\frac{v}{2})$
+	\newline
+	\newline
+	$\zeta^2 + ||\vec{\varepsilon}||^2 = cos^2(\frac{v}{2}) + sin^2(\frac{v}{2}) = 1$
+	\newline
+	\newline
+	$Q = ($\space$\zeta, \vec{\varepsilon}$\space)\space\space\space\fbox{$\zeta^2 + \varepsilon_x^2 + \varepsilon_y^2 + \varepsilon_z^2 = 1$} $\leftarrow$ Unit Quaternion
+	
+	\end{center}
+
+\subsection{Rotation Matrix With Quaternion}
+\begin{center}
+	$R($\space$\zeta, \vec{\varepsilon}$\space$) = 
+	\begin{bmatrix}
+	2(\zeta^2 + \varepsilon_x^2)-1 & 2(\varepsilon_x\varepsilon_y - \zeta\varepsilon_z & 2(\varepsilon_x\varepsilon_z + \zeta\varepsilon_y) \\
+	2(\varepsilon_x\varepsilon_y + \zeta\varepsilon_z) & 2(\zeta^2 + \varepsilon_y^2)-1 & 2(\varepsilon_y\varepsilon_z - \zeta\varepsilon_x) \\
+	2(\varepsilon_x\varepsilon_z - \zeta\varepsilon_y) & 2(\varepsilon_y\varepsilon_z + \zeta\varepsilon_x) & 2(\zeta^2 + \varepsilon_z^2)-1
+	\end{bmatrix}$
+	\newline
+	(if you represent the rotation as a quaternion)
+\end{center}
+
+\section{Inverse Problem: Construct rotation matrix and convert it to a quaternion}
+$R = 
+\begin{bmatrix}
+\gamma_{11} & \gamma_{12} & \gamma_{13} \\
+\gamma_{21} & \gamma_{22} & \gamma_{23} \\
+\gamma_{31} & \gamma_{32} & \gamma_{33} 
+\end{bmatrix}$
+\newline
+\newline
+$\zeta = \frac{1}{2}\sqrt{\gamma_{11} + \gamma_{22} + \gamma_{33} +1}$
+\newline
+\newline
+$\vec{\varepsilon} = \frac{1}{2} 
+\begin{bmatrix}
+sin(\gamma_{32}-\gamma_{23})\sqrt{\gamma_{11} - \gamma_{22} - \gamma_{33} +1} \\
+sin(\gamma_{13}-\gamma_{31})\sqrt{\gamma_{22} - \gamma_{33} - \gamma_{11} +1} \\ sin(\gamma_{21}-\gamma_{12})\sqrt{\gamma_{33} - \gamma_{11} - \gamma_{22} +1}
+\end{bmatrix} = 
+\begin{bmatrix}
+\varepsilon_x \\
+\varepsilon_y \\
+\varepsilon_z
+\end{bmatrix}$
+\newline
+- Note: $sin(x) = 1, $\space for\space$ x >= 0, $\space and\space$ sin(x) = -1, $\space for\space$ x < 0 $
+\newline
+\newline
+We always use quaternions in graphics pipeline
+\newline
+\newline
+$Q \equiv ($\space$\zeta, \vec{\varepsilon}$\space$) \equiv R($\space$\zeta, \vec{\varepsilon}$\space$)$
+\newline
+$RR^T = I \rightarrow R^{-1} = R^T$
+\newline
+$R^{-1}($\space$\zeta, \vec{\varepsilon}$\space$) \equiv Q^{-1}($\space$\zeta, \vec{\varepsilon}$\space$) \equiv ($\space$\zeta, -\vec{\varepsilon}$\space$)$
+\newline
+\newline
+$Q_1($\space$\zeta_1, \vec{\varepsilon}_1) \equiv R_1($\space$\zeta_1, \vec{\varepsilon}_1$\space$)$
+\newline
+$Q_2$\space$\zeta_2, \vec{\varepsilon}_2) \equiv R_2($\space$\zeta_2, \vec{\varepsilon}_2$\space$)$
+\newline
+\newline
+$R_1*R_2 \equiv R_1R_2$
+\newline
+\newline
+\fbox{$Q_1*Q_2 \equiv ($\space$\zeta_1\zeta_2 - \varepsilon_1^T\varepsilon_2)$,\space\space$\zeta_1\vec{\varepsilon}_2 + \zeta_2\vec{\varepsilon}_1 + \vec{\varepsilon}_1*\vec{\varepsilon}_2)$}
+\linebreak
+\newline
+Suppose  $Q_2 \equiv Q_1^{-1} \implies Q + Q_2 = Q * Q_1^{-1} = I = ( 1, \vec{0})$
+\newline
+$Q \equiv ($\space$\zeta, \vec{\varepsilon}$\space$),$\space$Q^{-1} \equiv ($\space$\zeta, -\vec{\varepsilon}$\space$)$
+\newline
+So $\zeta_1\zeta_2 - \varepsilon_1^T\varepsilon_2 = \zeta^2 + \varepsilon^T\varepsilon = \zeta^2 + \varepsilon_x^2 + \varepsilon_y^2 + \varepsilon_z^2 = 1$ (by definition of Quaternion)
+\newline
+$\zeta_1\vec{\varepsilon}_2 + \zeta_2\vec{\varepsilon}_1 + \vec{\varepsilon}_1*\vec{\varepsilon}_2 = - \zeta\vec{\varepsilon} + \zeta\vec{\varepsilon} - \vec{\varepsilon}*\vec{\varepsilon} = 0$
+
+\section{Homogeneous Transformations}
+\includegraphics[width=1.0\textwidth]{graph}
+\newline
+\newline
+$p^0 = O_1^0 + R_1^0P^1$ 
+\newline
+Instead of using matrix vector multiplication and vector-vector addtition we just use matrix-vector multiplication
+
+See shader.vs in the Transformations lecture
+\newline
+\newline
+$\hat{P} = 
+\begin{bmatrix}
+P_{[3x1]}^1 \\
+1
+\end{bmatrix}_{[4x1]}$,\space$A_1^0 = \begin{bmatrix}
+R_{1 [3x3]}^0 & O_{1 [3x1]}^0 \\
+0^T & 1_{[1x1]}\\
+\varepsilon_z
+\end{bmatrix}_{[4x4]}$,\space$0^T = \begin{bmatrix}
+0 & 0 & 0
+\end{bmatrix}_{[1x3]}$
+\newline
+\newline
+$P^0 = O_1^0 + R_1^0P^1$
+\newline
+${R_1^{0}}^{-1} = R_1^{0 T} \implies {R_1^{0}}^{-1}P^0 = R_1^{0 T}P^0 = R_1^{0 T}O_1^0 + R_1^{0 T}R_1^0P_1$,\space$R_1^{0 T}R_1^0P_1 =  P^1$
+$R_1^{0 T}P^0 = R_1^{0 T}O_1^0 + P^1 \implies P^1 = -R_1^{0 T}O_1^0 + R_1^{0 T}P^0$
+\newline
+\newline
+$A_0^1 = \begin{bmatrix}
+R_1^{0 T} & -R_1^{0 T}O_1^0 \\
+0^T & 1
+\end{bmatrix} * \begin{bmatrix}
+P^0 \\
+1
+\end{bmatrix}_{(\hat{P}^0)} = \begin{bmatrix}
+P^1 \\
+1
+\end{bmatrix}_{(\hat{P}^1)}$
+\newline
+\newline
+$\hat{P}^1 = A_0^1\hat{P}^0$,\space$\hat{P}^0 = A_1^0\hat{P}^1$
+$\hat{P}^1 = A_0^1A_1^0\hat{P}^0 \implies A_0^1A_1^0 = I \implies A_0^1 = {A_1^0}^{-1}$
+\newline
+\newline
+$A_1^0 = \begin{bmatrix}
+R_1^0 & O_1^0 \\
+0^T & 1
+\end{bmatrix}$,\space$A_0 = \begin{bmatrix}
+R_1^{0T} & -R_1^{0 T}O_1^0 \\
+0^T & 1
+\end{bmatrix}$
+\newline
+\newline
+NOTE\space$A_0^1 \not= A_1^{0 T}$ but $R_0^1 = R_1^{0 T}$
+
+\section{Manipulator Arm}
+\includegraphics[width=1.0\textwidth]{gripper}
+\end{document}
