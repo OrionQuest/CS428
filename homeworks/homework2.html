@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2. Homework #1 &mdash; CS 428 1.0 documentation</title>
+    <title>3. Homework #2 &mdash; CS 428 1.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="CS 428 1.0 documentation" href="../index.html" />
-    <link rel="next" title="3. Homework #2" href="homework2.html" />
-    <link rel="prev" title="1. Project Proposal" href="proposal.html" /> 
+    <link rel="next" title="1. Lecture #1" href="../lectures/lecture1.html" />
+    <link rel="prev" title="2. Homework #1" href="homework1.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,10 +36,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="homework2.html" title="3. Homework #2"
+          <a href="../lectures/lecture1.html" title="1. Lecture #1"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="proposal.html" title="1. Project Proposal"
+          <a href="homework1.html" title="2. Homework #1"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -50,26 +50,26 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="homework-1">
-<h1>2. Homework #1<a class="headerlink" href="#homework-1" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="homework-2">
+<h1>3. Homework #2<a class="headerlink" href="#homework-2" title="Permalink to this headline">¶</a></h1>
 <p>For all programming assignments, please turn in your code along with your
 solution. For all hardware assignments, please provide as much details on your
 implementation, along with a video of the final setup in action. Submissions should be made on Sakai,
-and must be in the form of a single PDF file that includes all descriptions/code, and a video file.</p>
+and must include all material in a single ZIP file with all descriptions/code, and a video file.</p>
 <div class="topic">
 <p class="topic-title first">Problem 1</p>
-<p>Write an OpenGL program to display a rotating <a class="reference external" href="../images/pinwheel.png">pinwheel</a>. The simplest implementation
-would use a 2D setup. Extra credit points can be earned by making use of texture
-maps on top of the pinwheel, making a 3D model that is more realistic, or
-attempting a more complex scene, such as a <a class="reference external" href="https://images.dailyhive.com/20171121101458/Ferris-wheel-Lower-Lonsdale-BIA.jpg">ferris wheel</a>.</p>
+<p>Write an OpenGL program to load a 3D humanoid model and display it to screen. Implement controls for lifting it&#8217;s arms and legs
+using key bindings. Note that there should be a separate control for the upper/lower left and right arms (and similarly for the legs).
+When the upper arm is moved, the lower arm should move as well, analogous to how the human body moves.</p>
 </div>
 <div class="topic">
-<p class="topic-title first">Problem 2</p>
-<p>Implement a traffic light circuit using the <a class="reference external" href="https://www.arduino.cc/">Arduino</a> board for two perpendicular lanes. This should make use of six LEDs
-(2 red, 2 blue, and 2 green), and two switches. Pressing a switch indicates
-that cars have been waiting in one lane, so the other lane (if green),
-should become yellow and then red. Vice-versa for the opposite situation.
-The circuit should enforce that only one lane stays green, and the other red, at all times.</p>
+<p class="topic-title first">Problem 2 (<strong>Intruder Alarm</strong>)</p>
+<p>Implement a circuit that uses an ultrasonic sensor to measure distance and display the output to an LCD screen.
+If the distance is below a specified threshold, then a buzzer should start beeping, indicating that an intruder is trespassing.
+When the intruder exits, the buzzer should stop beeping.</p>
+<p><strong>Extra Credit:</strong> Mount the ultrasonic sensor on a Servo motor to scan the front 180 degrees. If an intruder is inside a specified
+radius to the ultrasonic sensor, the Servo should stop scanning and point directly at the intruder, and the buzzer should start beeping.
+When the intruder exits, the Servo should start scanning again, and the buzzer should stop beeping.</p>
 </div>
 </div>
 
@@ -80,15 +80,15 @@ The circuit should enforce that only one lane stays green, and the other red, at
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="proposal.html"
-                        title="previous chapter">1. Project Proposal</a></p>
+  <p class="topless"><a href="homework1.html"
+                        title="previous chapter">2. Homework #1</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="homework2.html"
-                        title="next chapter">3. Homework #2</a></p>
+  <p class="topless"><a href="../lectures/lecture1.html"
+                        title="next chapter">1. Lecture #1</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/homeworks/homework1.txt"
+      <li><a href="../_sources/homeworks/homework2.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -116,10 +116,10 @@ The circuit should enforce that only one lane stays green, and the other red, at
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="homework2.html" title="3. Homework #2"
+          <a href="../lectures/lecture1.html" title="1. Lecture #1"
              >next</a> |</li>
         <li class="right" >
-          <a href="proposal.html" title="1. Project Proposal"
+          <a href="homework1.html" title="2. Homework #1"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
       </ul>
