@@ -8,9 +8,11 @@ and must include all material in a single ZIP file with all descriptions/code, a
 
 .. topic:: Problem 1
 
-    Write an OpenGL program to load a 3D humanoid model and display it to screen. Implement controls for lifting it's arms and legs
+    Write an OpenGL program to load a stick figure and display it to screen. Implement controls for lifting it's arms and legs
     using key bindings. Note that there should be a separate control for the upper/lower left and right arms (and similarly for the legs).
     When the upper arm is moved, the lower arm should move as well, analogous to how the human body moves.
+
+    **Extra Credit:** Replace the stick figure with a 3D humanoid model.
 
 
 .. topic:: Problem 2 (**Intruder Alarm**)

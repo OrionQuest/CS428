@@ -57,7 +57,8 @@ News and Announcements:
 * (01/30) There will be **no class on Wednesday, Feb. 6, 2019**.
 * `Project proposal <homeworks/proposal.html>`_ along with names of team members is due **no later than (02/27)**.
 * (02/13) `Homework #1 <homeworks/homework1.html>`_ is due on (02/24).
-* (03/11) `Homework #2 <homeworks/homework2.html>`_ is due on (03/31).
+* (03/11) `Homework #2 <homeworks/homework2.html>`_ is due on (04/02).
+* (03/27) There will be **no class on Wednesday, Apr. 3, 2019**.
 
 .. toctree::
     :numbered:
