@@ -59,6 +59,7 @@ News and Announcements:
 * (02/13) `Homework #1 <homeworks/homework1.html>`_ is due on (02/24).
 * (03/11) `Homework #2 <homeworks/homework2.html>`_ is due on (04/02).
 * (03/27) There will be **no class on Wednesday, Apr. 3, 2019**.
+* (04/01) `Homework #3 <homeworks/homework3.html>`_ is due on (04/21).
 
 .. toctree::
     :numbered:
@@ -68,6 +69,7 @@ News and Announcements:
     Project Proposal <homeworks/proposal>
     Homework #1 <homeworks/homework1>
     Homework #2 <homeworks/homework2>
+    Homework #3 <homeworks/homework3>
 
 Contents:
 ---------
