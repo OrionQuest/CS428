@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. Homework #2 &mdash; CS 428 1.0 documentation</title>
+    <title>4. Homework #3 &mdash; CS 428 1.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="CS 428 1.0 documentation" href="../index.html" />
-    <link rel="next" title="4. Homework #3" href="homework3.html" />
-    <link rel="prev" title="2. Homework #1" href="homework1.html" /> 
+    <link rel="next" title="1. Lecture #1" href="../lectures/lecture1.html" />
+    <link rel="prev" title="3. Homework #2" href="homework2.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,10 +36,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="homework3.html" title="4. Homework #3"
+          <a href="../lectures/lecture1.html" title="1. Lecture #1"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="homework1.html" title="2. Homework #1"
+          <a href="homework2.html" title="3. Homework #2"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -50,27 +50,31 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="homework-2">
-<h1>3. Homework #2<a class="headerlink" href="#homework-2" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="homework-3">
+<h1>4. Homework #3<a class="headerlink" href="#homework-3" title="Permalink to this headline">¶</a></h1>
 <p>For all programming assignments, please turn in your code along with your
-solution. For all hardware assignments, please provide as much details on your
-implementation, along with a video of the final setup in action. Submissions should be made on Sakai,
-and must include all material in a single ZIP file with all descriptions/code, and a video file.</p>
+solution. Submissions should be made on Sakai, and must include all material
+in a single ZIP file with all descriptions/code, and a video file.</p>
 <div class="topic">
 <p class="topic-title first">Problem 1</p>
-<p>Write an OpenGL program to load a stick figure and display it to screen. Implement controls for lifting it&#8217;s arms and legs
-using key bindings. Note that there should be a separate control for the upper/lower left and right arms (and similarly for the legs).
-When the upper arm is moved, the lower arm should move as well, analogous to how the human body moves.</p>
-<p><strong>Extra Credit:</strong> Replace the stick figure with a 3D humanoid model.</p>
-</div>
-<div class="topic">
-<p class="topic-title first">Problem 2 (<strong>Intruder Alarm</strong>)</p>
-<p>Implement a circuit that uses an ultrasonic sensor to measure distance and display the output to an LCD screen.
-If the distance is below a specified threshold, then a buzzer should start beeping, indicating that an intruder is trespassing.
-When the intruder exits, the buzzer should stop beeping.</p>
-<p><strong>Extra Credit:</strong> Mount the ultrasonic sensor on a Servo motor to scan the front 180 degrees. If an intruder is inside a specified
-radius to the ultrasonic sensor, the Servo should stop scanning and point directly at the intruder, and the buzzer should start beeping.
-When the intruder exits, the Servo should start scanning again, and the buzzer should stop beeping.</p>
+<p>Design and implement an animation sequence for rigid body dynamics with collisions and contact. You can use
+a Physics engine such as:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://pybullet.org/wordpress/">Bullet Physics</a></li>
+<li><a class="reference external" href="https://www.ode.org/">Open Dynamics Engine</a></li>
+<li><a class="reference external" href="http://www.mujoco.org/">MuJoCo</a></li>
+<li><a class="reference external" href="https://projectchrono.org/">Chrono</a></li>
+</ul>
+<p>or any other open-source engine of your choice. All frames in the animation
+sequence should be rendered using a rendering engine, such as:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://www.blender.org/">Blender</a></li>
+<li><a class="reference external" href="https://pbrt.org/">PBRT</a></li>
+<li><a class="reference external" href="https://renderman.pixar.com/">RenderMan</a></li>
+</ul>
+<p>or any other rendering engine of your choice. Extra credit will be given to
+students depending on the level of creativity in designing the scene, and rendering
+the video.</p>
 </div>
 </div>
 
@@ -81,15 +85,15 @@ When the intruder exits, the Servo should start scanning again, and the buzzer s
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="homework1.html"
-                        title="previous chapter">2. Homework #1</a></p>
+  <p class="topless"><a href="homework2.html"
+                        title="previous chapter">3. Homework #2</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="homework3.html"
-                        title="next chapter">4. Homework #3</a></p>
+  <p class="topless"><a href="../lectures/lecture1.html"
+                        title="next chapter">1. Lecture #1</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/homeworks/homework2.txt"
+      <li><a href="../_sources/homeworks/homework3.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -117,10 +121,10 @@ When the intruder exits, the Servo should start scanning again, and the buzzer s
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="homework3.html" title="4. Homework #3"
+          <a href="../lectures/lecture1.html" title="1. Lecture #1"
              >next</a> |</li>
         <li class="right" >
-          <a href="homework1.html" title="2. Homework #1"
+          <a href="homework2.html" title="3. Homework #2"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">CS 428 1.0 documentation</a> &raquo;</li> 
       </ul>
