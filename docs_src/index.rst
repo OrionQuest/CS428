@@ -96,8 +96,11 @@ Contents:
 Coding Resources:
 -----------------
 
-Thanks to a current student, Yijia Liu, here is a guide to OpenGL programming
+Thanks to a current student, Mr. Yijia Liu, here is a guide to OpenGL programming
 with Visual Studio 2017 on Windows: `PDF <scribe_notes/OpenGL_VS2017_Guide.pdf>`_
+
+Thanks to Ms. Laurel Han, here is a guide to using Maya and RenderMan on the
+iLab machines: `PDF <scribe_notes/renderman_maya_tutorial.pdf>`_
 
 Modeling and Rendering Resources:
 ---------------------------------
